@@ -1,24 +1,16 @@
-"""This code houses the fibonacci and lucas functions."""
+"""This module defines functions that implement mathematical series."""
+
+from math import sqrt
 
 
 def fibonacci(n):
     """Return the nth number in the fibonacci series."""
-    if n == 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fibonacci(n - 1) + fibonacci(n - 2)
+    return int(((1+sqrt(5))**n-(1-sqrt(5))**n)/(2**n*sqrt(5)))
 
 
 def lucas(n):
     """Return the nth number in the lucas series."""
-    if n == 0:
-        return 2
-    elif n == 1:
-        return 1
-    else:
-        return lucas(n - 1) + lucas(n - 2)
+    return sum_series(n, 2, 1)
 
 
 def sum_series(n, first=0, second=1):
@@ -50,3 +42,7 @@ if __name__ == "__main__":
     print("\t>>>fibonacci(2): ", fibonacci(2))
     print("\t>>>lucas(3): ", lucas(3))
     print("\t>>>sum_series(4, 3, 3): ", sum_series(4, 3, 3))
+    fibonacci(30)
+    fibonacci(40)
+    fibonacci(50)
+    fibonacci(80)
