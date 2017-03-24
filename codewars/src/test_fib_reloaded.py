@@ -1,4 +1,4 @@
-"""Tests for https://www.codewars.com/kata/even-fibonacci-sum."""
+"""Tests for https://www.codewars.com/kata/fibonacci-reloaded-sum."""
 
 import pytest
 
