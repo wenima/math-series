@@ -13,4 +13,7 @@ def prime(a):
 def step(g, m, n):
     """Return the first pair of primes between m and n with step g."""
     primes = [i for i in range(m, n) if prime(i)]
-    return next([p, q] for idx, p in enumerate(primes, 1) for q in islice(primes, idx, len(primes)) if q - p == g)
+    try:
+        return next([p, q] for idx, p in enumerate(primes, 1) for q in islice(primes, idx, len(primes)) if q - p == g)
+    except StopIteration:
+        return None
