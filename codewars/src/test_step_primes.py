@@ -1,14 +1,14 @@
-"""Tests for https://www.codewars.com/kata/calculate-fibonacci-return-count-of-digit-occurrences."""
+"""Tests for https://www.codewars.com/kata/steps-in-primes/python."""
 
 import pytest
 
 
 TEST = [
-    (2,100,110), [101, 103]),
-    (4,100,110), [103, 107]),
-    (6,100,110), [101, 107]),
-    (8,300,400), [359, 367]),
-    (10,300,400), [307, 317]),
+    (2,100,110, [101, 103]),
+    (4,100,110, [103, 107]),
+    (6,100,110, [101, 107]),
+    (8,300,400, [359, 367]),
+    (10,300,400, [307, 317]),
 
 ]
 
