@@ -1,6 +1,3 @@
-"""Module to solve kata https://www.codewars.com/kata/surrounding-primes-for-a-value/."""
-
-
 def eratosthenes_step2(n):
     """Return all primes up to and including n if n is a prime
    Since we know primes can't be even, we iterate in steps of 2."""
@@ -23,17 +20,24 @@ def prime(n, primes):
     return True
 
 
-def is_prime(a):
-    """Return True if a is prime."""
-    if a == 2: return True
-    if a < 2 or a % 2 == 0: return False
-    return not any(a % x == 0 for x in range(3, int(a**0.5) + 1, 2))
+def get_next_prime(n, primes, direction=1):
+    """Return the next prime of n in given direction."""
+    if direction > 0:
+        start = n + 1 if n % 2 == 0 else n + 2
+        step = 2
+        stop = n * n
+    else:
+        start = n -1 if n % 2 == 0 else n - 2
+        step = -2
+        stop = 0
+    prime_generator = (x for x in xrange(start, stop, step) if prime(x, primes))
+    return prime_generator.next()
 
 
 def prime_bef_aft(n):
     """Return the first pair of primes between m and n with step g."""
     #n needs to start out as an odd number so we can step over known composites
-    primes = [p for p in eratosthenes_step2(int(n**0.5))]
-    before = next(x for x in range(n - 1 if n % 2 == 0 else n -2, 0, -2) if prime(x, primes))
-    after = next(x for x in range(n + 1 if n % 2 == 0 else n + 2, n * n, 2) if is_prime(x))
+    primes = [p for p in eratosthenes_step2(int(n // 2))]
+    before = get_next_prime(n, primes, -1)
+    after = get_next_prime(n, primes, 1)
     return [before, after]
