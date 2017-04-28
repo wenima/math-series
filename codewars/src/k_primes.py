@@ -1,5 +1,7 @@
 """Module to solve https://www.codewars.com/kata/k-primes/python."""
 
+from collections import defaultdict
+from itertools import takewhile
 
 def eratosthenes_step2(n):
     """Return all primes up to and including sqrt of n.
@@ -17,6 +19,9 @@ def prime_factors(n, primes, k):
     """Return a list of prime factors for a given number in ascending order if
     the number of prime factors equals k."""
     factors = []
+    if k == 1 and n in primes:
+        factors.append(n)
+        return factors
     for p in primes:
         while True:
             if n % p:
@@ -52,3 +57,33 @@ def find_k_primes(k, start, end, primes=None):
     for n in range(start, end + 1):
         if prime_factors(n, primes, k): out.append(n)
     return out
+
+
+def find_largest_k_prime(k, n):
+    """Return the largest k prime for given n."""
+    print(2 ** (k + 1))
+    if 2 ** (k + 1) > n:
+        prime = 2 ** k
+        return ((2 ** k), n - prime)
+    else:
+        return 0, 0
+
+def puzzle_pieces(n):
+    """Return the number of combinations a 1, 3, and 7 k prime can be added up to n."""
+    kprimes = defaultdict(list)
+    kprimes = {key : [] for key in [7, 3, 1]}
+    upper = 0
+    for k in kprimes.keys():
+        if k == 7:
+            prime, upper = find_largest_k_prime(k, n)
+            if not prime:
+                return []
+            kprimes[k].append(prime)
+        if k == 3:
+            kprimes[k].extend(countKprimes(k, 2, upper))
+            upper -= kprimes[k][0]
+        if k == 1:
+            primes = get_primes(upper)
+            for p in takewhile(lambda x: x <= upper, primes):
+                kprimes[k].append(p)
+    return sorted([n for k, v in kprimes.items() for n in v])
