@@ -10,10 +10,15 @@ TESTS_PF = [
     (1, 2, 10, [2, 3, 5, 7]),
 ]
 
-
 PUZZLE_PRIMES = [
-    (138, [2, 8, 128]),
-    (143, [2, 3, 5, 7, 8, 12, 128, ]),
+    (138, {1: [2], 3: [8], 7: [128]}),
+    (143, {1: [2, 3, 5, 7], 3: [8, 12], 7: [128]}),
+]
+
+PUZZLE_SOLUTIONS = [
+    (138, 1),
+    (143, 2),
+    (1, 0)
 ]
 
 
@@ -25,7 +30,13 @@ def test_k_primes(k, start, end, result):
     assert countKprimes(k, start, end) == result
 
 @pytest.mark.parametrize('n, result', PUZZLE_PRIMES)
-def test_puzzle(n, result):
+def test_puzzle_pieces(n, result):
     """Test that the correct primes for puzzle are returned."""
     from k_primes import puzzle_pieces
     assert puzzle_pieces(n) == result
+
+@pytest.mark.parametrize('n, result', PUZZLE_SOLUTIONS)
+def test_puzzle(n, result):
+    """Test that the correct number of solutions are returned."""
+    from k_primes import puzzle
+    assert puzzle(n) == result

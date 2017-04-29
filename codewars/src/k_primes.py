@@ -61,19 +61,19 @@ def find_k_primes(k, start, end, primes=None):
 
 def find_largest_k_prime(k, n):
     """Return the largest k prime for given n."""
-    print(2 ** (k + 1))
-    if 2 ** (k + 1) > n:
+    if 2 ** k < n < 2 ** (k + 1):
         prime = 2 ** k
         return ((2 ** k), n - prime)
     else:
         return 0, 0
 
 def puzzle_pieces(n):
-    """Return the number of combinations a 1, 3, and 7 k prime can be added up to n."""
+    """Return a dictionary holding all 1, 3, and 7 k primes."""
     kprimes = defaultdict(list)
     kprimes = {key : [] for key in [7, 3, 1]}
     upper = 0
     for k in kprimes.keys():
+        print(k)
         if k == 7:
             prime, upper = find_largest_k_prime(k, n)
             if not prime:
@@ -86,4 +86,13 @@ def puzzle_pieces(n):
             primes = get_primes(upper)
             for p in takewhile(lambda x: x <= upper, primes):
                 kprimes[k].append(p)
-    return sorted([n for k, v in kprimes.items() for n in v])
+    return kprimes
+
+
+def puzzle(n):
+    """Return the number of combinations 1, 3, 7 k primes can make to sum up to target."""
+    pieces = puzzle_pieces(n)
+    if not pieces:
+        return 0
+    target = n - pieces[7][0]
+    return len([(num, v) for num in pieces[3] for v in pieces[1] if num + v == target])
