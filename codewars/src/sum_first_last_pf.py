@@ -1,6 +1,6 @@
 """Solution to Kata https://www.codewars.com/kata/https://www.codewars.com/kata/the-sum-of-the-first-and-the-last-prime-factor-make-chains-of-numbers/."""
 
-def sflpf_data(val, nMax):
+def sflpf_data(val, end):
     """Return a sorted list of numbers whose first and last prime factor sum up to val."""
     out = []
     for n in range(4, end + 1):
