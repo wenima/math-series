@@ -41,7 +41,7 @@ def get_primes(n):
     return [p for p in eratosthenes_step2(n)]
 
 
-def countKprimes(k, start, end):
+def count_Kprimes(k, start, end):
     """Return a list of k-primes betwene start and end. A k-prime is a number
     which has exactly k primes, multiplicity counted. Before generating primes,
     we cap the range of primes to only those needed."""
@@ -54,8 +54,17 @@ def countKprimes(k, start, end):
 def find_k_primes(k, start, end, primes=None):
     """Return a list of k-primes between start and end given a list of primes."""
     out = []
-    for n in range(start, end + 1):
-        if prime_factors(n, primes, k): out.append(n)
+    if k == 1:
+        for p in takewhile(lambda x: x <= end, primes):
+                out.append(p)
+                return out
+    if start < 2 ** (k + 1): start = 2 ** k
+    for n in xrange(start, end + 1):
+        if k != 1 and n in primes:
+            continue
+        if out and n - 1 == out[-1] and k > 3:
+            continue
+        if prime_factors(n, primes, k, out): out.append(n)
     return out
 
 
@@ -80,7 +89,7 @@ def puzzle_pieces(n):
                 return []
             kprimes[k].append(prime)
         if k == 3:
-            kprimes[k].extend(countKprimes(k, 2, upper))
+            kprimes[k].extend(count_Kprimes(k, 2, upper))
             upper -= kprimes[k][0]
         if k == 1:
             primes = get_primes(upper)
