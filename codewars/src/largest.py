@@ -14,4 +14,8 @@ def is_prime(n):
 
 def largest(n):
     """Return the largest prime with n digits."""
-    pass
+    start = int(''.join(['9' for i in range(n)]))
+    for n in range(start, start - (10 ** n - 1) + 1, -2):
+        if is_prime(n):
+            return n
+    return False
