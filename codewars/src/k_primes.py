@@ -3,37 +3,43 @@
 from collections import defaultdict
 from itertools import takewhile
 
+_CACHE = {}
+
+
 def eratosthenes_step2(n):
     """Return all primes up to and including sqrt of n.
    Since we know primes can't be even, we iterate in steps of 2."""
     if n >= 2:
         yield 2
     multiples = set()
-    for i in range(3, n+1, 2):
+    for i in xrange(3, n+1, 2):
         if i not in multiples:
             yield i
-            multiples.update(range(i*i, n+1, i))
+            multiples.update(xrange(i*i, n+1, i))
 
 
-def prime_factors(n, primes, k):
+def probable_prime(n):
+    """Return True if n is a probable prime according to Fermat's theorem."""
+    return pow(2, n-1, n) == 1
+
+
+
+def prime_factors(n, primes, factors=[]):
     """Return a list of prime factors for a given number in ascending order if
     the number of prime factors equals k."""
-    factors = []
-    if k == 1 and n in primes:
-        factors.append(n)
-        return factors
     for p in primes:
-        while True:
-            if n % p:
-                break
-            else:
-                n = n // p
-                factors.append(p)
-                if n < p:
-                    return factors if len(factors) == k else None
-                if len(factors) > k:
-                    return None
-    return factors if len(factors) == k else None
+        if p * p > n:
+              break
+        if n in primes:
+            break
+        if n % p:
+            continue
+        else:
+            n = n // p
+            factors.append(p)
+            return prime_factors(n, primes, factors)
+    factors.append(n)
+    return factors
 
 
 def get_primes(n):
@@ -41,12 +47,32 @@ def get_primes(n):
     return [p for p in eratosthenes_step2(n)]
 
 
+def get_divisors(n, primes, divs=[]):
+    """Return a list of n's divisors."""
+    for p in primes:
+        if p * p > n:
+            break
+        if n % p:
+            continue
+        else:
+            n = n // p
+            divs.append(n)
+            return get_divisors(n, divs)
+    return divs
+
+
+
 def count_Kprimes(k, start, end):
     """Return a list of k-primes betwene start and end. A k-prime is a number
     which has exactly k primes, multiplicity counted. Before generating primes,
-    we cap the range of primes to only those needed."""
+    we cap the xrange of primes to only those needed."""
+    out = []
     if end//2 ** (k -1) > 0:
         primes = get_primes(end//2 ** (k - 1))#only primes up to 2**(k-1) are possible prime factors
+        if k == 1:
+            for p in takewhile(lambda x: x <= end, primes):
+                out.append(p)
+            return out
         return find_k_primes(k, start, end, primes)
     return []
 
@@ -54,17 +80,20 @@ def count_Kprimes(k, start, end):
 def find_k_primes(k, start, end, primes=None):
     """Return a list of k-primes between start and end given a list of primes."""
     out = []
-    if k == 1:
-        for p in takewhile(lambda x: x <= end, primes):
-                out.append(p)
-                return out
     if start < 2 ** (k + 1): start = 2 ** k
     for n in xrange(start, end + 1):
-        if k != 1 and n in primes:
+        divisors = []
+        factors = []
+        if k != 1 and probable_prime(n):
             continue
-        if out and n - 1 == out[-1] and k > 3:
+        if _CACHE.get(n, 0):
+            if len(_CACHE[n]) == k: out.append(n)
             continue
-        if prime_factors(n, primes, k, out): out.append(n)
+        divisors = get_divisors(n, primes, divisors)
+        _CACHE[n] = prime_factors(n, primes, factors)
+        for idx, div in enumerate(divisors):
+            _CACHE[div] = _CACHE[n][idx + 1:]
+        if len(_CACHE[n]) == k: out.append(n)
     return out
 
 
@@ -81,8 +110,7 @@ def puzzle_pieces(n):
     kprimes = defaultdict(list)
     kprimes = {key : [] for key in [7, 3, 1]}
     upper = 0
-    for k in kprimes.keys():
-        print(k)
+    for k in sorted(kprimes.keys(), reverse=True):
         if k == 7:
             prime, upper = find_largest_k_prime(k, n)
             if not prime:

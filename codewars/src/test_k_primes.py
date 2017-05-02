@@ -26,8 +26,8 @@ PUZZLE_SOLUTIONS = [
 @pytest.mark.parametrize('k, start, end, result', TESTS_PF)
 def test_k_primes(k, start, end, result):
     """Test that the correct k primes within start and end are returned."""
-    from k_primes import countKprimes
-    assert countKprimes(k, start, end) == result
+    from k_primes import count_Kprimes
+    assert count_Kprimes(k, start, end) == result
 
 @pytest.mark.parametrize('n, result', PUZZLE_PRIMES)
 def test_puzzle_pieces(n, result):
