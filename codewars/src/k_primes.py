@@ -44,17 +44,35 @@ def get_primes(n):
     return [p for p in eratosthenes_step2(n)]
 
 
-def get_divisors(n, primes, divs=[]):
+def get_divisors(n, k, divs=[]):
     """Return a list of n's divisors."""
-    for p in primes:
-        if p * p > n:
-            break
-        if n % p:
-            continue
-        else:
+    divs = []
+    p = 2
+    while True:
+        if n % p == 0:
             n = n // p
             divs.append(n)
-            return get_divisors(n, divs)
+        else:
+            p = 3
+            break
+    while True:
+        try:
+            if n >= pow(p, (k - 1) - len(divs)):
+                break
+        except TypeError:
+            pass
+        if n < p * p:
+            break
+        if n % p:
+            p += 2
+        else:
+            n = n // p
+            if probable_prime(n):
+                break
+            divs.append(n)
+            if len(divs) > k:
+                return []
+    divs.append(n)
     return divs
 
 
@@ -65,8 +83,9 @@ def count_Kprimes(k, start, end):
     we cap the xrange of primes to only those needed."""
     out = []
     if end//2 ** (k -1) > 0:
-        primes = get_primes(end//2 ** (k - 1))#only primes up to 2**(k-1) are possible prime factors
+        primes = get_primes(int(end ** 0.5) + 1)
         if k == 1:
+            primes = get_primes(end//2 ** (k - 1)) #only primes up to 2**(k-1) are possible prime factors
             for p in takewhile(lambda x: x <= end, primes):
                 out.append(p)
             return out
