@@ -8,7 +8,7 @@ def highest_biPrimefac(p1, p2, end):
     k2 = 0
     highest = 0
     for n in range(end, 0, -1):
-        pf = prime_factors(n)
+        pf = prime_factors(n, given_primes)
         if given_primes == set(pf):
             if pf.count(p1) > k1 and pf.count(p2) > k2:
                 k1 = pf.count(p1)
@@ -18,8 +18,7 @@ def highest_biPrimefac(p1, p2, end):
             return [highest, k1, k2]
     return None
 
-
-def prime_factors(n):
+def prime_factors(n, given_primes):
     """Return a list with all prime factors of n."""
     factors = []
     if n < 2:
@@ -29,6 +28,8 @@ def prime_factors(n):
         if n % p:
             p += 1
         else:
+            if p not in given_primes:
+                return []
             n = n // p
             factors.append(p)
     factors.append(n)
