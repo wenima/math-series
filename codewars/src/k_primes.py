@@ -27,17 +27,14 @@ def probable_prime(n):
 def prime_factors(n, primes, factors=[]):
     """Return a list of prime factors for a given number in ascending order if
     the number of prime factors equals k."""
+    factors = []
     for p in primes:
-        if p * p > n:
-              break
-        if n in primes:
-            break
-        if n % p:
-            continue
-        else:
-            n = n // p
-            factors.append(p)
-            return prime_factors(n, primes, factors)
+        while n >= (p * p):
+            if n % p:
+                break
+            else:
+                n = n // p
+                factors.append(p)
     factors.append(n)
     return factors
 
