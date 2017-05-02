@@ -57,7 +57,7 @@ def get_divisors(n, k, divs=[]):
             break
     while True:
         try:
-            if n >= pow(p, (k - 1) - len(divs)):
+            if n <= pow(p, (k - 1) - len(divs)):
                 break
         except TypeError:
             pass
@@ -105,7 +105,7 @@ def find_k_primes(k, start, end, primes=None):
         if _CACHE.get(n, 0):
             if len(_CACHE[n]) == k: out.append(n)
             continue
-        divisors = get_divisors(n, primes, divisors)
+        divisors = get_divisors(n, k, divisors)
         _CACHE[n] = prime_factors(n, primes, factors)
         for idx, div in enumerate(divisors):
             _CACHE[div] = _CACHE[n][idx + 1:]
