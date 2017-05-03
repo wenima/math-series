@@ -3,8 +3,13 @@
 from collections import defaultdict
 from itertools import takewhile
 
-_CACHE = {}
-
+def memoize(f):
+    """Return an item from cache."""
+    memo={}
+    def helper(x, y):
+        if x not in memo:memo[x]=f(x, y)
+        return memo[x]
+    return helper
 
 def eratosthenes_step2(n):
     """Return all primes up to and including sqrt of n.
@@ -21,7 +26,6 @@ def eratosthenes_step2(n):
 def probable_prime(n):
     """Return True if n is a probable prime according to Fermat's theorem."""
     return pow(2, n-1, n) == 1
-
 
 
 def prime_factors(n, primes, factors=[]):
@@ -43,8 +47,8 @@ def get_primes(n):
     """Return a list of primes up to and including n."""
     return [p for p in eratosthenes_step2(n)]
 
-
-def get_divisors(n, k, divs=[]):
+# @memoize
+def get_divisors(n, k):
     """Return a list of n's divisors."""
     divs = []
     p = 2
@@ -100,18 +104,13 @@ def find_k_primes(k, start, end, primes=None):
     out = []
     if start < 2 ** (k + 1): start = 2 ** k
     for n in xrange(start, end + 1):
-        divisors = []
-        factors = []
         if k != 1 and probable_prime(n):
             continue
-        if _CACHE.get(n, 0):
-            if len(_CACHE[n]) == k: out.append(n)
+        divisors = get_divisors(n, k)
+        if len(divisors) == k:
+            out.append(n)
+        else:
             continue
-        divisors = get_divisors(n, k, divisors)
-        _CACHE[n] = prime_factors(n, primes, factors)
-        for idx, div in enumerate(divisors):
-            _CACHE[div] = _CACHE[n][idx + 1:]
-        if len(_CACHE[n]) == k: out.append(n)
     return out
 
 
