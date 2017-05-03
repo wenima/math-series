@@ -67,12 +67,14 @@ def get_divisors(n, k, divs=[]):
             p += 2
         else:
             n = n // p
+            divs.append(n)
             if probable_prime(n):
                 break
-            divs.append(n)
             if len(divs) > k:
                 return []
-    divs.append(n)
+    if divs:
+        if divs[-1] != 1:
+            divs.append(1)
     return divs
 
 
@@ -113,14 +115,6 @@ def find_k_primes(k, start, end, primes=None):
     return out
 
 
-def find_largest_k_prime(k, n):
-    """Return the largest k prime for given n."""
-    if 2 ** k < n < 2 ** (k + 1):
-        prime = 2 ** k
-        return ((2 ** k), n - prime)
-    else:
-        return 0, 0
-
 def puzzle_pieces(n):
     """Return a dictionary holding all 1, 3, and 7 k primes."""
     kprimes = defaultdict(list)
@@ -128,10 +122,10 @@ def puzzle_pieces(n):
     upper = 0
     for k in sorted(kprimes.keys(), reverse=True):
         if k == 7:
-            prime, upper = find_largest_k_prime(k, n)
-            if not prime:
+            kprimes[k].extend(count_Kprimes(k, 2, n))
+            if not kprimes[k]:
                 return []
-            kprimes[k].append(prime)
+            upper = n - kprimes[k][0]
         if k == 3:
             kprimes[k].extend(count_Kprimes(k, 2, upper))
             upper -= kprimes[k][0]
