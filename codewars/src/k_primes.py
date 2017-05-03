@@ -3,13 +3,9 @@
 from collections import defaultdict
 from itertools import takewhile
 
-def memoize(f):
-    """Return an item from cache."""
-    memo={}
-    def helper(x, y):
-        if x not in memo:memo[x]=f(x, y)
-        return memo[x]
-    return helper
+
+_CACHE = {}
+
 
 def eratosthenes_step2(n):
     """Return all primes up to and including sqrt of n.
@@ -26,6 +22,35 @@ def eratosthenes_step2(n):
 def probable_prime(n):
     """Return True if n is a probable prime according to Fermat's theorem."""
     return pow(2, n-1, n) == 1
+
+
+def isprime_6k(n):
+    """Returns True if n is prime."""
+    if n < 2:
+        return False
+    if n == 2:
+        return True
+    if n == 3:
+        return True
+    if n % 2 == 0:
+        return False
+    if n % 3 == 0:
+        return False
+    d = 5
+    w = 2
+    while d * d <= n:
+        if n % d == 0:
+            return False
+        d += w
+        w = 6 - w
+    return True
+
+
+def is_prime(n):
+    if probable_prime(n):
+        if isprime_6k(n):
+            return True
+    return False
 
 
 def prime_factors(n, primes, factors=[]):
@@ -47,7 +72,7 @@ def get_primes(n):
     """Return a list of primes up to and including n."""
     return [p for p in eratosthenes_step2(n)]
 
-# @memoize
+
 def get_divisors(n, k):
     """Return a list of n's divisors."""
     divs = []
@@ -72,7 +97,7 @@ def get_divisors(n, k):
         else:
             n = n // p
             divs.append(n)
-            if probable_prime(n):
+            if is_prime(n):
                 break
             if len(divs) > k:
                 return []
@@ -106,11 +131,17 @@ def find_k_primes(k, start, end, primes=None):
     for n in xrange(start, end + 1):
         if k != 1 and probable_prime(n):
             continue
+        if _CACHE.get(n, 0):
+            if len(_CACHE[n]) == k: out.append(n)
+            continue
         divisors = get_divisors(n, k)
         if len(divisors) == k:
             out.append(n)
         else:
             continue
+        _CACHE[n] = prime_factors(n, primes)
+        for idx, div in enumerate(divisors):
+            _CACHE[div] = _CACHE[n][idx + 1:]
     return out
 
 
