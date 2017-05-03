@@ -138,8 +138,11 @@ def puzzle_pieces(n):
 
 def puzzle(n):
     """Return the number of combinations 1, 3, 7 k primes can make to sum up to target."""
+    solutions = 0
     pieces = puzzle_pieces(n)
     if not pieces:
         return 0
-    target = n - pieces[7][0]
-    return len([(num, v) for num in pieces[3] for v in pieces[1] if num + v == target])
+    for kprime in pieces[7]:
+        target = n - kprime
+        solutions += len([(num, v) for num in pieces[3] for v in pieces[1] if num + v == target])
+    return solutions
