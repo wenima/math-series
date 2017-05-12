@@ -2,7 +2,7 @@
 
 import pytest
 
-TESTS = [
+TEST = [
     (10, 23),
 ]
 
